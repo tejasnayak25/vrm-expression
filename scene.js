@@ -60,7 +60,8 @@ loader.load("./Amla.vrm", (gltf) => {
     let root = vrm.scene;
     scene.add(root);
 
-    let vrmExpression = new CustomVRMExpression({ vrm, overrides: { iris: "./images/iris.png" }, additionalExpressions: ['happy'] });
+    // let vrmExpression = new CustomVRMExpression({ vrm, overrides: { iris: "./images/iris.png" }, additionalExpressions: ['happy'] });
+    let vrmExpression = new CustomVRMExpression({ vrm, overrides: { face: "./images/face.png", eyeline: "./images/eyeliner.png", eyelash: "./images/eyelash.png" }, additionalExpressions: ['blink'] });
 
     let range = document.getElementById("exp");
 

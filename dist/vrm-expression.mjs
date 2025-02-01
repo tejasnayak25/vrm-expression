@@ -3,7 +3,7 @@ import * as THREE_VRM from "@pixiv/three-vrm";
 
 let exp_count=1;
 
-export default class VRMExpression {
+export default class CustomVRMExpression {
     constructor({ 
         name = null,
         vrm = null, 
@@ -39,8 +39,14 @@ export default class VRMExpression {
         vrm.scene.traverse((obj) => {
             if (obj.isMesh && obj.material) {
                 Object.entries(this.materialkeys).forEach(([key, materialName]) => {
-                    if (obj.material.name === materialName) {
-                        this.origMaterials[key] = obj.material;
+                    if(obj.material.length) {
+                        if(obj.material.find(item => item.name === materialName)) {
+                            this.origMaterials[key] = obj.material;
+                        }
+                    } else {
+                        if (obj.material.name === materialName) {
+                            this.origMaterials[key] = obj.material;
+                        }
                     }
                 });
             }
@@ -55,7 +61,12 @@ export default class VRMExpression {
 
             this.textureLoader.load(texturePath, (texture) => {
                 let newMaterial = new THREE_VRM.MToonMaterial();
-                newMaterial.copy(this.origMaterials[key]);
+                if(this.origMaterials[key].length) {
+                    newMaterial.copy(this.origMaterials[key][0]);
+                } else {
+                    newMaterial.copy(this.origMaterials[key]);
+                }
+                texture.flipY = false;
                 newMaterial.map = texture;
                 newMaterial.needsUpdate = true;
 
@@ -75,6 +86,7 @@ export default class VRMExpression {
             if (obj.isMesh && obj.material) {
                 Object.entries(this.overrides).forEach(([key]) => {
                     if (obj.material === (useOriginal ? this.repMaterials[key] : this.origMaterials[key])) {
+                        console.log(obj.material);
                         obj.material = useOriginal ? this.origMaterials[key] : this.repMaterials[key];
                     }
                 });

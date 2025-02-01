@@ -39,8 +39,14 @@ exports.CustomVRMExpression = class CustomVRMExpression {
         vrm.scene.traverse((obj) => {
             if (obj.isMesh && obj.material) {
                 Object.entries(this.materialkeys).forEach(([key, materialName]) => {
-                    if (obj.material.name === materialName) {
-                        this.origMaterials[key] = obj.material;
+                    if(obj.material.length) {
+                        if(obj.material.find(item => item.name === materialName)) {
+                            this.origMaterials[key] = obj.material;
+                        }
+                    } else {
+                        if (obj.material.name === materialName) {
+                            this.origMaterials[key] = obj.material;
+                        }
                     }
                 });
             }
@@ -55,7 +61,12 @@ exports.CustomVRMExpression = class CustomVRMExpression {
 
             this.textureLoader.load(texturePath, (texture) => {
                 let newMaterial = new THREE_VRM.MToonMaterial();
-                newMaterial.copy(this.origMaterials[key]);
+                if(this.origMaterials[key].length) {
+                    newMaterial.copy(this.origMaterials[key][0]);
+                } else {
+                    newMaterial.copy(this.origMaterials[key]);
+                }
+                texture.flipY = false;
                 newMaterial.map = texture;
                 newMaterial.needsUpdate = true;
 
@@ -75,6 +86,7 @@ exports.CustomVRMExpression = class CustomVRMExpression {
             if (obj.isMesh && obj.material) {
                 Object.entries(this.overrides).forEach(([key]) => {
                     if (obj.material === (useOriginal ? this.repMaterials[key] : this.origMaterials[key])) {
+                        console.log(obj.material);
                         obj.material = useOriginal ? this.origMaterials[key] : this.repMaterials[key];
                     }
                 });
