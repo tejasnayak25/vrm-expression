@@ -1,7 +1,6 @@
-### VRM Skeleton
-Display a skeleton on your vrm model and pose it.
+### VRM Expression
+Add custom expressions to your vrm model.
 
 ### Requirements
 - three.js
-- three.interactive
 - @pixiv/three-vrm
